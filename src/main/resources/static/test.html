@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script type="text/javascript" src="jquery-1.11.2.js"></script>
+</head>
+<body>
+        <input id="txtTest" name="add" value="" style="width: 500px">
+        <div id="addbox" style="border:1px solid #000000; display:none; width: 500px; padding: 0px">
+            <ul id="add" style="margin: 0px; padding: 0px">
+            </ul>
+        </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#txtTest').bind('input', function () {
+            var addr = $('#txtTest').val();
+            var ul = $('#add');
+            var box = $('#addbox');
+            $.ajax({
+                dataType:'jsonp',
+                async: false,
+                url:'https://addr-sug.taobao.com/suggestion?l1=310000&l2=310100&l3=310112&callback=?&lang=zh-S&addr='+addr,
+                type:'get',
+                jsonp: 'callback',
+                /*jsonpCallback: 'getAddress',*/
+                success:function (data) {
+                    console.log(data);
+                    box.css('display','block');
+                    ul.html('');
+                    if(data.result.length>0){
+                        for(var i = 0;i<data.result.length;i++){
+                            ul.append("<li style='list-style:none' onclick='add(this)'>"+data.result[i]+"</li>");
+                        }
+                    }
+                    if(data.result.length==0){
+                        box.css('display','none');
+                    }
+                },
+                /*error: function(XMLHttpRequest, textStatus, errorThrown){
+                    alert(XMLHttpRequest.status);
+                    alert(XMLHttpRequest.readyState);
+                    alert(textStatus);
+                }*/
+            });
+        });
+    });
+
+    function  add(obj) {
+        var address = obj.innerHTML;
+        $('#txtTest').val(address);
+        var box = $('#addbox');
+        box.css('display','none');
+    }
+</script>
+</body>
+</html>
